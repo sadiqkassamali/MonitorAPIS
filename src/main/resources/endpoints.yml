@@ -1,0 +1,19 @@
+spring:
+  config:
+    import: optional:classpath:endpoints.yml
+
+
+endpoints:
+  - uniqueId: myApp-featureA-dev
+    url: http://example.com
+    method: GET
+    endpoint: api/featureA
+    requestBody: ...
+    contentType: application/json
+  - uniqueId: myApp-featureB-dev
+    url: http://example.com
+    method: POST
+    endpoint: api/featureB
+    requestBody: ...
+    contentType: application/json
+

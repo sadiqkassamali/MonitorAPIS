@@ -43,12 +43,6 @@
             <artifactId>spring-boot-starter-mail</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>Monitor</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
 
     </dependencies>
     <build>

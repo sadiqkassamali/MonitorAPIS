@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, List, ListItem, ListItemText, Typography, Container } from '@material-ui/core';
+import { Button, List, ListItem, ListItemText, Typography, Container } from '@mui/material';
 
 function App() {
     const [responses, setResponses] = useState([]);

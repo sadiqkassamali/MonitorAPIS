@@ -1,3 +1,5 @@
+package com.example;
+
 public class EndpointConfig {
     private String url;
     private String method;

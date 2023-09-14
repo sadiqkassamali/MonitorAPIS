@@ -1,5 +1,8 @@
 public class EndpointConfig {
     private String url;
+    private String method;
+    private String header;
+    private String endpoint;
 
     public String getUrl() {
         return url;
@@ -32,10 +35,6 @@ public class EndpointConfig {
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
     }
-
-    private String method;
-    private String header;
-    private String endpoint;
 
     // Getters and setters
 }

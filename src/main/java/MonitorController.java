@@ -24,11 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @RestController
 public class MonitorController {
 
+    private static final Logger log = LoggerFactory.getLogger(MonitorController.class);
     @Autowired
     private EmailService emailService;
-
-    private static final Logger log = LoggerFactory.getLogger(MonitorController.class);
-
     @Value("classpath:endpoints.yml")
     private Resource endpointsYaml;
 
@@ -89,12 +87,11 @@ public class MonitorController {
     }
 
 
-
     private void authenticateAndRetrieveToken() {
         try {
             HttpHeaders authHeaders = new HttpHeaders();
             authHeaders.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> authRequestEntity = new HttpEntity<>("{}" , authHeaders);
+            HttpEntity<String> authRequestEntity = new HttpEntity<>("{}", authHeaders);
             RestTemplate authRestTemplate = new RestTemplate();
             ResponseEntity<String> authResponseEntity = authRestTemplate.exchange("http://localhost:8080/authenticate", HttpMethod.POST, authRequestEntity, String.class);
 

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+@ComponentScan
 @RestController
 public class MonitorController {
 
@@ -38,8 +41,6 @@ public class MonitorController {
     @Value("${last.success.time.threshold}")
     private long lastSuccessTimeThreshold;
 
-    @Value("${endpoints}")
-    private List<Map<String, String>> endpoints;
 
     private String authToken;
     private Map<String, Long> lastSuccessfulResponseTimes = new ConcurrentHashMap<>();

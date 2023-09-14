@@ -5,13 +5,13 @@ spring:
 
 endpoints:
   - uniqueId: myApp-featureA-dev
-    url: http://example.com
+    url: http://google.com
     method: GET
     endpoint: api/featureA
     requestBody: ...
     contentType: application/json
   - uniqueId: myApp-featureB-dev
-    url: http://example.com
+    url: http://google.com
     method: POST
     endpoint: api/featureB
     requestBody: ...

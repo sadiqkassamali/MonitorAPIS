@@ -5,14 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -28,15 +25,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-@ComponentScan
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MonitorController {
-
-
-
     private static final Logger log = LoggerFactory.getLogger(MonitorController.class);
     @Autowired
     private EmailService emailService;
+
     @Value("classpath:endpoints.yml")
     private Resource endpointsYaml;
 
@@ -45,7 +40,6 @@ public class MonitorController {
 
     @Value("${last.success.time.threshold}")
     private long lastSuccessTimeThreshold;
-
 
     private String authToken;
     private Map<String, Long> lastSuccessfulResponseTimes = new ConcurrentHashMap<>();
@@ -89,11 +83,10 @@ public class MonitorController {
                 registry.addMapping("/**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*")
-                        .allowedOrigins("http://localhost:3000"); // Add your React app's origin here
+                        .allowedOrigins("*");
             }
         };
     }
-
 
     @PostMapping("/sendAdHocRequest")
     public ResponseEntity<String> sendAdHocRequest(@RequestBody Map<String, String> request) {
@@ -107,7 +100,6 @@ public class MonitorController {
 
         return sendRequest(uniqueId, properties);
     }
-
 
     private void authenticateAndRetrieveToken() {
         try {
@@ -160,7 +152,7 @@ public class MonitorController {
             if (lastSuccessfulResponseTimes.containsKey(fullUrl)) {
                 long lastSuccessTime = lastSuccessfulResponseTimes.get(fullUrl);
                 if (currentTime - lastSuccessTime > lastSuccessTimeThreshold) {
-                    sendDownNotificationEmail(fullUrl);
+                    sendDownNotificationEmail(uniqueId);
                 }
             }
 

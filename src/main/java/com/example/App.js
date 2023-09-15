@@ -15,7 +15,7 @@ function App() {
             contentType: endpoint.contentType
         };
 
-        axios.post('http://localhost:8080/sendAdHocRequest', requestObject)
+        axios.post('http://localhost:8080/sendAdHocRequest', requestObject, { headers: { 'Content-Type': 'application/json' } })
             .then(response => {
                 console.log('Ad-hoc request sent successfully:', response);
             })

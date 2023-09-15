@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
@@ -28,6 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @ComponentScan
 @RestController
 public class MonitorController {
+
+
 
     private static final Logger log = LoggerFactory.getLogger(MonitorController.class);
     @Autowired
@@ -75,6 +80,20 @@ public class MonitorController {
 
         return endpoints;
     }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("*")
+                        .allowedOrigins("http://localhost:3000"); // Add your React app's origin here
+            }
+        };
+    }
+
 
     @PostMapping("/sendAdHocRequest")
     public ResponseEntity<String> sendAdHocRequest(@RequestBody Map<String, String> request) {

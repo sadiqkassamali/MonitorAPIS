@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {Button, Container, List, ListItem, ListItemText, Typography} from '@mui/material';
+import { Button, List, ListItem, ListItemText, Typography, Container } from '@material-ui/core';
 
 function App() {
     const [responses, setResponses] = useState([]);
@@ -44,7 +44,7 @@ function App() {
             <List>
                 {responses.map(endpoint => (
                     <ListItem key={endpoint.uniqueId}>
-                        <ListItemText primary={`Unique ID: ${endpoint.uniqueId}`}/>
+                        <ListItemText primary={`Unique ID: ${endpoint.uniqueId}`} />
                         <Button variant="contained" color="primary" onClick={() => sendAdHocRequest(endpoint)}>
                             Send Ad-Hoc Request
                         </Button>

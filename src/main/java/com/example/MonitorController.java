@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,14 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -75,23 +71,11 @@ public class MonitorController {
         return endpoints;
     }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("*")
-                        .allowedOrigins("*");
-            }
-        };
-    }
 
     @PostMapping("/sendAdHocRequest")
     public ResponseEntity<String> sendAdHocRequest(@RequestBody Map<String, String> request) {
         String uniqueId = request.get("uniqueId");
-        Map<String, String> properties = new HashMap<>();
+        Map<String, String> properties = new ConcurrentHashMap<>();
         properties.put("url", request.get("url"));
         properties.put("method", request.get("method"));
         properties.put("endpoint", request.get("endpoint"));
@@ -100,6 +84,8 @@ public class MonitorController {
 
         return sendRequest(uniqueId, properties);
     }
+
+
 
     private void authenticateAndRetrieveToken() {
         try {
@@ -131,7 +117,7 @@ public class MonitorController {
             String fullUrl = url + "/" + endpoint;
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + authToken);
+            headers.set("Authorization", authToken);
             headers.setContentType(MediaType.valueOf(contentType));
 
             HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
@@ -140,8 +126,7 @@ public class MonitorController {
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(fullUrl, HttpMethod.valueOf(method), requestEntity, String.class);
 
-            HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode();
-
+            HttpStatusCode statusCode = responseEntity.getStatusCode();
             String statusMessage = (statusCode == HttpStatus.OK) ? "UP" : statusCode.toString();
 
             log.info("Monitoring {} - {} : {}", fullUrl, statusMessage);
@@ -157,7 +142,7 @@ public class MonitorController {
             }
 
             return responseEntity;
-        } catch (RestClientException e) {
+        } catch (Exception e) {
             log.error("Error occurred during request: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

@@ -1,29 +1,52 @@
+import com.example.MonitorController;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
 public class AppConfig {
 
+
+    @Value("${json.files.directory}")
+    private String jsonFilesDirectory;
+
     @Bean
-    public Map<String, Map<String, String>> endpoints() {
-        try {
-            InputStream inputStream = getClass().getResourceAsStream("/endpoints.json");
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(inputStream, Map.class);
-        } catch (IOException e) {
-            // Handle exception here
-            e.printStackTrace();
-            return new HashMap<>(); // Return an empty map in case of error
-        }
+    public MonitorController monitorController(List<Map<String, Map<String, String>>> allEndpoints) {
+        return new MonitorController(allEndpoints);
     }
+
+    @Bean
+    public List<Map<String, Map<String, String>>> allEndpoints() {
+        List<Map<String, Map<String, String>>> allEndpoints = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            // Load JSON files from a directory
+            File jsonFilesDir = new File(jsonFilesDirectory);
+            File[] jsonFiles = jsonFilesDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".json"));
+
+            if (jsonFiles != null) {
+                for (File jsonFile : jsonFiles) {
+                    Map<String, Map<String, String>> endpoints = objectMapper.readValue(jsonFile, new TypeReference<Map<String, Map<String, String>>>() {});
+                    allEndpoints.add(endpoints);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return allEndpoints;
+    }
+
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {

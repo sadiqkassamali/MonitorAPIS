@@ -1,14 +1,10 @@
 package com.example;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,9 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -61,26 +55,17 @@ public class MonitorController {
         }
     }
 
+    private final List<Map<String, Map<String, String>>> allEndpoints;
+
+    public MonitorController(List<Map<String, Map<String, String>>> allEndpoints) {
+        this.allEndpoints = allEndpoints;
+    }
 
     @GetMapping("/endpoints")
-    public Map<String, Map<String, String>> getEndpoints() {
-        Map<String, Map<String, String>> endpoints = new HashMap<>();
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            Resource[] resources = ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources("classpath:/endpoints/*.json");
-
-            for (Resource resource : resources) {
-                InputStream inputStream = resource.getInputStream();
-                Map<String, Map<String, String>> jsonData = objectMapper.readValue(inputStream, new TypeReference<Map<String, Map<String, String>>>() {});
-                endpoints.putAll(jsonData);
-            }
-        } catch (IOException e) {
-            log.error("An error occurred while reading JSON files: {}", e.getMessage());
-        }
-
-        return endpoints;
+    public List<Map<String, Map<String, String>>> getEndpoints() {
+        return allEndpoints;
     }
+
 
     @PostMapping("/sendAdHocRequest")
     public ResponseEntity<String> sendAdHocRequest(@RequestBody Map<String, String> request) {

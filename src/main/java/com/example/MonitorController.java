@@ -1,22 +1,26 @@
 package com.example;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,8 +32,8 @@ public class MonitorController {
     @Autowired
     private EmailService emailService;
 
-    @Value("classpath:endpoints.yml")
-    private Resource endpointsYaml;
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Value("${global.schedule}")
     private long globalSchedule;
@@ -45,32 +49,38 @@ public class MonitorController {
         try {
             authenticateAndRetrieveToken();
 
-            List<Map<String, String>> endpointsList = getEndpoints();
+            Map<String, Map<String, String>> endpointsList = getEndpoints();
 
-            for (Map<String, String> endpoint : endpointsList) {
-                String uniqueId = endpoint.get("uniqueId");
-                sendRequest(uniqueId, endpoint);
+            for (Map.Entry<String, Map<String, String>> entry : endpointsList.entrySet()) {
+                String uniqueId = entry.getKey();
+                Map<String, String> properties = entry.getValue();
+                sendRequest(uniqueId, properties);
             }
         } catch (Exception e) {
             log.error("An error occurred: {}", e.getMessage());
         }
     }
 
-    @GetMapping("/endpoints")
-    public List<Map<String, String>> getEndpoints() {
-        List<Map<String, String>> endpoints = new ArrayList<>();
-        Yaml yaml = new Yaml();
 
-        try (InputStream inputStream = endpointsYaml.getInputStream()) {
-            Map<String, List<Map<String, String>>> yamlData = yaml.load(inputStream);
-            endpoints = yamlData.get("endpoints");
+    @GetMapping("/endpoints")
+    public Map<String, Map<String, String>> getEndpoints() {
+        Map<String, Map<String, String>> endpoints = new HashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            Resource[] resources = ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources("classpath:/endpoints/*.json");
+
+            for (Resource resource : resources) {
+                InputStream inputStream = resource.getInputStream();
+                Map<String, Map<String, String>> jsonData = objectMapper.readValue(inputStream, new TypeReference<Map<String, Map<String, String>>>() {});
+                endpoints.putAll(jsonData);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("An error occurred while reading JSON files: {}", e.getMessage());
         }
 
         return endpoints;
     }
-
 
     @PostMapping("/sendAdHocRequest")
     public ResponseEntity<String> sendAdHocRequest(@RequestBody Map<String, String> request) {

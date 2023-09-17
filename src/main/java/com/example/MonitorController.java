@@ -43,28 +43,17 @@ public class MonitorController {
         try {
             authenticateAndRetrieveToken();
 
-            Map<String, Map<String, String>> endpointsList = getEndpoints();
-
-            for (Map.Entry<String, Map<String, String>> entry : endpointsList.entrySet()) {
-                String uniqueId = entry.getKey();
-                Map<String, String> properties = entry.getValue();
-                sendRequest(uniqueId, properties);
+            for (Map<String, String> endpoint : endpoints) {
+                String uniqueId = endpoint.get("uniqueId");
+                sendRequest(uniqueId, endpoint);
             }
         } catch (Exception e) {
             log.error("An error occurred: {}", e.getMessage());
         }
     }
 
-    private final List<Map<String, Map<String, String>>> allEndpoints;
-
-    public MonitorController(List<Map<String, Map<String, String>>> allEndpoints) {
-        this.allEndpoints = allEndpoints;
-    }
-
-    @GetMapping("/endpoints")
-    public List<Map<String, Map<String, String>>> getEndpoints() {
-        return allEndpoints;
-    }
+    @Autowired
+    private List<Map<String, String>> endpoints;
 
 
     @PostMapping("/sendAdHocRequest")

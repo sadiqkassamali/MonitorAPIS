@@ -73,12 +73,16 @@ function App() {
     }
 
     useEffect(() => {
+        // Fetch endpoints initially
         fetchEndpoints();
+
+        // Set up an interval to fetch endpoints every 5 seconds (adjust as needed)
+        const interval = setInterval(fetchEndpoints, 5000);
+
+        // Clean up the interval when the component is unmounted
+        return () => clearInterval(interval);
     }, []);
 
-    const toggleDarkMode = () => {
-        setDarkMode(!darkMode);
-    };
 
     return (
         <ThemeProvider theme={darkMode ? createMuiTheme({ palette: { type: 'dark' } }) : theme}>

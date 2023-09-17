@@ -1,32 +1,23 @@
 package com.example;
 
-import com.example.JsonUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
 import java.util.Map;
 
 @Configuration
 public class AppConfig {
 
+    @Value("classpath:endpoints.json")
+    private InputStream endpointsJson;
 
     @Bean
-    public List<Map<String, String>> endpoints() throws IOException {
-        Resource[] resources = new PathMatchingResourcePatternResolver().getResources("classpath:endpoints.json");
-        List<Map<String, String>> endpoints = new ArrayList<>();
-
-        for (Resource resource : resources) {
-            endpoints.addAll(JsonUtil.readJsonFile(resource.getInputStream()));
-        }
-
-        return endpoints;
+    public Map<String, Map<String, String>> endpoints() throws Exception {
+        return JsonUtil.readJsonFile(endpointsJson);
     }
 
     @Bean

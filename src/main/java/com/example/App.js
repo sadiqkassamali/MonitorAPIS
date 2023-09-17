@@ -13,6 +13,13 @@ import {
     makeStyles,
     Switch
 } from '@material-ui/core';
+import { createMuiTheme } from '@material-ui/core/styles';
+
+const theme = createMuiTheme({
+    palette: {
+        type: 'light',
+    },
+});
 
 const useStyles = makeStyles((theme) => ({
     darkModeToggle: {
@@ -59,16 +66,14 @@ function App() {
         fetchEndpoints();
     }, []);
 
-    const theme = createTheme({
-        palette: {
-            type: darkMode ? 'dark' : 'light',
-        },
-    });
-
     const classes = useStyles();
 
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={darkMode ? createTheme({
+            palette: {
+                type: 'dark',
+            },
+        }) : theme}>
             <CssBaseline />
             <Container>
                 <Typography variant="h3" align="center" gutterBottom>Endpoint Responses</Typography>

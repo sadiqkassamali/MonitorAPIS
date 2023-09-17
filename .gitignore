@@ -1,3 +1,5 @@
 /target/classes/*.*
 /target/classes/com/example/*.*
 
+/lib/*
+/.idea/*

@@ -76,14 +76,18 @@ function App() {
         }) : theme}>
             <CssBaseline />
             <Container>
-                <Typography variant="h3" align="center" gutterBottom>Endpoint Responses</Typography>
+                <Typography variant="h3" align="center" gutterBottom>Environment Stability View</Typography>
                 <List>
-                    {endpoints.map(endpoint => (
-                        <ListItem key={endpoint.uniqueId}>
-                            <ListItemText primary={`Unique ID: ${endpoint.uniqueId}`} />
-                            <Button variant="contained" color="primary" onClick={() => sendAdHocRequest(endpoint)}>
+                    {Object.keys(responses).map(endpointKey => (
+                        <ListItem key={endpointKey}>
+                            <ListItemText primary={`Unique ID: ${responses[endpointKey].uniqueId}`} />
+                            <Button variant="contained" color="primary" onClick={() => sendAdHocRequest(responses[endpointKey])}>
                                 Send Ad-Hoc Request
                             </Button>
+                            <div>
+                                <Typography variant="body1">Response:</Typography>
+                                <pre>{JSON.stringify(responses[endpointKey].response, null, 2)}</pre>
+                            </div>
                         </ListItem>
                     ))}
                 </List>

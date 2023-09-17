@@ -4,15 +4,7 @@
     "url": "https://api.example.com/endpoint1",
     "method": "GET",
     "endpoint": "/path1",
-    "requestBody": "",
-    "contentType": "application/json"
-  },
-  "endpoint2": {
-    "uniqueId": "endpoint2",
-    "url": "https://api.example.com/endpoint2",
-    "method": "POST",
-    "endpoint": "/path2",
-    "requestBody": "{\"key\": \"value\"}",
+    "requestBody": "{\"asasasas\" : \"asas\"}",
     "contentType": "application/json"
   }
 }

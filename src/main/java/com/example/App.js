@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
 function App() {
     const [endpoints, setEndpoints] = useState([]);
     const [darkMode, setDarkMode] = useState(false);
+    const [responses, setResponses] = useState([]);
 
     const sendAdHocRequest = (endpoint) => {
         const requestObject = {
@@ -46,6 +47,14 @@ function App() {
         axios.post('http://localhost:8080/sendAdHocRequest', requestObject, { headers: { 'Content-Type': 'application/json' } })
             .then(response => {
                 console.log('Ad-hoc request sent successfully:', response);
+                // Update the response in state
+                setResponses(prevResponses => ({
+                    ...prevResponses,
+                    [endpoint.uniqueId]: {
+                        ...prevResponses[endpoint.uniqueId],
+                        response: response.data
+                    }
+                }));
             })
             .catch(error => {
                 console.error('Error sending ad-hoc request:', error);
@@ -55,7 +64,7 @@ function App() {
     const fetchEndpoints = () => {
         axios.get('http://localhost:8080/endpoints')
             .then(response => {
-                setEndpoints(response.data);
+                setResponses(response.data);
             })
             .catch(error => {
                 console.error('Error fetching endpoints:', error);

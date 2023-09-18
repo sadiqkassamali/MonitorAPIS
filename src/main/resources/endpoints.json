@@ -5,6 +5,7 @@
     "method": "GET",
     "endpoint": "/path1",
     "requestBody": "{\"asasasas\" : \"asas\"}",
-    "contentType": "application/json"
+    "contentType": "application/json",
+    "status": "UNKNOWN"
   }
 }

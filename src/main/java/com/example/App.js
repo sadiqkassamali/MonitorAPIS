@@ -32,9 +32,8 @@ const useStyles = makeStyles((theme) => ({
 function App() {
     const [responses, setResponses] = useState({});
     const [darkMode, setDarkMode] = useState(false);
-
     const classes = useStyles();
-
+    const [longPollingResponse, setLongPollingResponse] = useState(null);
     const sendAdHocRequest = (endpoint) => {
         const requestObject = {
             uniqueId: endpoint.uniqueId,
@@ -61,6 +60,22 @@ function App() {
                 console.error('Error sending ad-hoc request:', error);
             });
     }
+
+    const startLongPolling = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/long-polling');
+            setLongPollingResponse(response.data);
+        } catch (error) {
+            console.error('Error during long polling:', error);
+        } finally {
+            startLongPolling(); // Start a new long-polling request after completion
+        }
+    }
+
+    useEffect(() => {
+        startLongPolling();
+    }, []);
+
 
     const fetchEndpoints = () => {
         axios.get('http://localhost:8080/endpoints')

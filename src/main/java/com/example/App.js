@@ -34,6 +34,7 @@ function App() {
     const [darkMode, setDarkMode] = useState(false);
     const classes = useStyles();
     const [longPollingResponse, setLongPollingResponse] = useState(null);
+    const [testResults, setTestResults] = useState([]);
     const sendAdHocRequest = (endpoint) => {
         const requestObject = {
             uniqueId: endpoint.uniqueId,
@@ -76,6 +77,16 @@ function App() {
         startLongPolling();
     }, []);
 
+
+    const fetchTestResults = () => {
+        axios.get('http://localhost:8080/getTestResults')
+            .then(response => {
+                setTestResults(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching test results:', error);
+            });
+    }
 
     const fetchEndpoints = () => {
         axios.get('http://localhost:8080/endpoints')
@@ -127,6 +138,23 @@ function App() {
                                     <Typography variant="body1">Response:</Typography>
                                     <pre>{JSON.stringify(endpoint.response, null, 2)}</pre>
                                 </div>
+
+                                <div>
+                                    <Typography variant="h3" gutterBottom>Test Results</Typography>
+                                    <List>
+                                        {testResults.map((result, index) => (
+                                            <ListItem key={index}>
+                                                <ListItemText primary={`Application: ${result.application}`} />
+                                                <ListItemText primary={`Environment: ${result.env}`} />
+                                                <ListItemText primary={`Tag: ${result.tag}`} />
+                                                <ListItemText primary={`Pass Percent: ${result.passPercent}`} />
+                                                <ListItemText primary={`Fail Percent: ${result.failPercent}`} />
+                                                <ListItemText primary={`Date and Time: ${result.dateTime}`} />
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </div>
+
                             </ListItem>
                         );
                     })}

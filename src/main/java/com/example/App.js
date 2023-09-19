@@ -28,7 +28,17 @@ const useStyles = makeStyles((theme) => ({
         right: 10,
     },
 }));
+const getStableStatus = (failPercent) => {
+    if (failPercent < 50) return 'Unstable';
+    if (failPercent >= 50 && failPercent <= 75) return 'SO-SO';
+    return 'Stable';
+}
 
+const getStableColor = (failPercent) => {
+    if (failPercent < 50) return 'red';
+    if (failPercent >= 50 && failPercent <= 75) return 'orange'; // Amber color
+    return 'green';
+}
 function App() {
     const [responses, setResponses] = useState({});
     const [darkMode, setDarkMode] = useState(false);
@@ -150,6 +160,11 @@ function App() {
                                                 <ListItemText primary={`Pass Percent: ${result.passPercent}`} />
                                                 <ListItemText primary={`Fail Percent: ${result.failPercent}`} />
                                                 <ListItemText primary={`Date and Time: ${result.dateTime}`} />
+                                                <ListItemText
+                                                    primary={`Stable: ${getStableStatus(result.failPercent)}`}
+                                                    style={{ color: getStableColor(result.failPercent) }}
+                                                />
+
                                             </ListItem>
                                         ))}
                                     </List>

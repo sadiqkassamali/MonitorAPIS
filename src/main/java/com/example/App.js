@@ -161,31 +161,34 @@ function App() {
                         const endpoint = responses[endpointKey];
                         const statusColor = endpoint.status === 200 ? 'green' : 'red';
                         return (
-                            <ListItem key={endpointKey}>
-                                <ListItemText primary={
-                                    <span style={{color: statusColor}}>
+                            <Card key={endpointKey} style={{ marginBottom: '1rem' }}>
+                                <CardContent>
+                                    <Typography variant="h5" component="div" style={{ color: statusColor }}>
+                                        Application: {endpoint.application}<br/>
+                                        Environment: {endpoint.environment}<br/>
+                                        Stripe: {endpoint.stripe}<br/>
+                                        Cluster: {endpoint.cluster}<br/>
                                         Unique ID: {endpoint.uniqueId}
-                                    </span>
-                                }/>
-                                <Grid container spacing={2} justify="flex-end" alignItems="center">
-                                    <Grid item>
-                                        <Button variant="contained" color="primary" onClick={sendAdHocRequest}>
-                                            Send Ad-Hoc Request
-                                        </Button>
+                                    </Typography>
+                                    <Grid container spacing={2} justify="flex-end" alignItems="center">
+                                        <Grid item>
+                                            <Button variant="contained" color="primary" onClick={sendAdHocRequest}>
+                                                Send Ad-Hoc Request
+                                            </Button>
+                                        </Grid>
+                                        <Grid item>
+                                            <FormControlLabel
+                                                control={<Switch checked={darkMode} onChange={toggleDarkMode} color="primary" />}
+                                                label="Dark Mode"
+                                            />
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
-                                        <FormControlLabel
-                                            control={<Switch checked={darkMode} onChange={toggleDarkMode} color="primary" />}
-                                            label="Dark Mode"
-                                        />
-                                    </Grid>
-                                </Grid>
-                                <div>
-                                    <Typography variant="body1">Response:</Typography>
-                                    <pre>{JSON.stringify(endpoint.response, null, 2)}</pre>
-                                </div>
-
-                            </ListItem>
+                                    <div>
+                                        <Typography variant="body1">Response:</Typography>
+                                        <pre>{JSON.stringify(endpoint.response, null, 2)}</pre>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         );
                     })}
                 </List>

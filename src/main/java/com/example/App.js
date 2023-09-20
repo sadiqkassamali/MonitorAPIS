@@ -192,25 +192,28 @@ function App() {
             </Container>
 
             <Container>
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                        <Typography variant="h5" gutterBottom>Test Results</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <List>
-                            {testResults.map((result, index) => (
-                                <ListItem key={index}>
-                                    <ListItemText primary={`Application: ${result.application}`}/>
-                                    <ListItemText primary={`Environment: ${result.env}`}/>
-                                    <ListItemText primary={`Tag: ${result.tag}`}/>
-                                    <ListItemText primary={`Pass Percent: ${result.passPercent}`}/>
-                                    <ListItemText primary={`Fail Percent: ${result.failPercent}`}/>
-                                    <ListItemText primary={`Date and Time: ${result.dateTime}`}/>
-                                </ListItem>
-                            ))}
-                        </List>
-                    </AccordionDetails>
-                </Accordion>
+                <Container>
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography variant="h5" gutterBottom>Test Results</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <List>
+                                {testResults.map((result, index) => (
+                                    <ListItem key={index}>
+                                        <ListItemText primary={`Application: ${result.application}`} />
+                                        <ListItemText primary={`Environment: ${result.env}`} />
+                                        <ListItemText primary={`Tag: ${result.tag}`} />
+                                        <ListItemText primary={`Pass Percent: ${result.passPercent}`} />
+                                        <ListItemText primary={`Fail Percent: ${result.failPercent}`} />
+                                        <ListItemText primary={`Date and Time: ${result.dateTime}`} />
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </AccordionDetails>
+                    </Accordion>
+
+                </Container>
             </Container>
         </ThemeProvider>
     );

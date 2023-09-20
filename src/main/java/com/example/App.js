@@ -157,11 +157,10 @@ function App() {
                 </Tooltip>
                 <Typography variant="h3" gutterBottom>Endpoint Responses</Typography>
                 <List>
-                    {Object.keys(responses).map(endpointKey => {
-                        const endpoint = responses[endpointKey];
+                    {Object.values(responses).map(endpoint => {
                         const statusColor = endpoint.status === 200 ? 'green' : 'red';
                         return (
-                            <Card key={endpointKey} style={{ marginBottom: '1rem' }}>
+                            <Card key={endpoint.uniqueId} style={{ marginBottom: '1rem' }}>
                                 <CardContent>
                                     <Typography variant="h5" component="div" style={{ color: statusColor }}>
                                         Application: {endpoint.application}<br/>
@@ -170,19 +169,9 @@ function App() {
                                         Cluster: {endpoint.cluster}<br/>
                                         Unique ID: {endpoint.uniqueId}
                                     </Typography>
-                                    <Grid container spacing={2} justify="flex-end" alignItems="center">
-                                        <Grid item>
-                                            <Button variant="contained" color="primary" onClick={sendAdHocRequest}>
-                                                Send Ad-Hoc Request
-                                            </Button>
-                                        </Grid>
-                                        <Grid item>
-                                            <FormControlLabel
-                                                control={<Switch checked={darkMode} onChange={toggleDarkMode} color="primary" />}
-                                                label="Dark Mode"
-                                            />
-                                        </Grid>
-                                    </Grid>
+                                    <Button variant="contained" color="primary" onClick={() => sendAdHocRequest(endpoint)}>
+                                        Send Ad-Hoc Request
+                                    </Button>
                                     <div>
                                         <Typography variant="body1">Response:</Typography>
                                         <pre>{JSON.stringify(endpoint.response, null, 2)}</pre>
